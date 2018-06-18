@@ -1,5 +1,7 @@
-#include <stdio.h>
-#include <stdlib.h>
+#include<stdio.h>
+#include<stdlib.h>
+
+int media3x3(int altura, int largura, int **matriz, int **matrizm);
 
 void learquivo(FILE *fp,char *buffer);
 
@@ -23,6 +25,7 @@ int main(){
 	int altura;
 	int tons;
 	char arquivo[80];
+	char arquivofinal[80];
 	
 	//variaveis de controle de leitura: buffer e ponteiro pra vetor dos numeros, alem das variaveis i e j para colocar os dados na matriz
 	char buffer[80];
@@ -66,6 +69,7 @@ int main(){
 	}
 	
 	printf("imagem carregada\n\n");
+	fclose(fp);
 	
 	for(i = 0; i < altura; i++){
 		for(j = 0; j < largura;j++){
@@ -73,7 +77,7 @@ int main(){
 		}
 		printf("\n");
 	}
-	
+	printf("\n");
 	printf("o que deseja fazer%c\n\n",63);
 	printf("1 - Mascara laplaciana 3x3\n");
 	printf("2 - Media 3x3\n");
@@ -84,21 +88,24 @@ int main(){
 		//CODIGO DO KEVÃO DA MASCARA
 	}
 	else if(modo == '2'){
-		//CODIGO DO PEDRINHO DA MEDIA
+		media3x3(altura,largura,imagem,imagemfim);
 	}
 	else if(modo == '0'){
 		printf("Nada foi feito\nSaindo...\n");
-		LibMatriz(largura,altura,imagem);
+		LibMatriz(altura,largura,imagem);
 		fclose(fp);
 		exit(1);
 	}
 	
 	
-	//ainda preciso fazer o codigo pra escrever a imagem final num arquivo
+	//printf("digite o nome do arquivo que deseja salvar\n");
+	//gets(arquivofinal);
+	//fp = fopen(arquivofinal, "w");
 	
 	
 	
-	LibMatriz(largura,altura,imagem);
+	
+	LibMatriz(altura,largura,imagem);
 	fclose(fp);
 	return 0;
 }
@@ -220,7 +227,7 @@ int **LibMatriz (int m, int n, int **v){
     int  i; 
     if (v == NULL){
     return (NULL);
-}
+	}
     if (m < 1 || n < 1) { 
     printf ("** Erro: Parametro invalido **\n");
     return (v);
@@ -230,4 +237,92 @@ int **LibMatriz (int m, int n, int **v){
         }
       free (v);      
       return (NULL);
+}
+
+
+int media3x3(int altura, int largura, int **matriz, int **matrizm){
+	int i=0,j=0,p=0;
+
+	int matriz0[altura+2][largura+2];	// DEFINE A MATRIZ QUE VAI SER UTILIZADA PARA SER EDITADA UTILIZANDO A MÉDIA.
+	int x=0;
+	int y=0;
+	int f=0;
+	int v=0,d=0;
+	int pou=0;
+	int media[3][3]={0,0,0,0,0,0,0,0,0}; // Matriz da média
+	i=0;
+	j=0;
+	
+	for(i=0;i<altura+2;i++){   //faz uma matriz só com zeros para receber a imagem e criar as bordas(0);
+             
+       for(j=0;j<largura+2;j++){
+           matriz0[i][j] =0;
+		   printf("%d  ", matriz0[i][j]);
+       }
+		printf("\n");	
+	}
+	i=0;
+	j=0;
+	printf("\n");
+	for(i=1;i<=altura;i++){       //INSERE A IMAGEM NA MATRIZ ZERADA
+             
+       		for(j=1;j<=largura;j++){
+           		matriz0[i][j] = matriz[i-1][j-1];
+			printf("%d  ", matriz0[i][j]);
+		}
+		printf("\n");	
+	}
+			
+	i=0;
+	j=0;
+	printf("\n");
+	for(i=0;i<altura+2;i++){ //Printa a imagem da matriz para ver se ocorreu tudo certo com as bordas
+             
+       for(j=0;j<largura+2;j++){
+		   printf("%d  ", matriz0[i][j]);
+       }
+		printf("\n");
+	}
+	printf("\n");
+
+	i=1;
+	j=1;
+	for(i=1,v=0;i<=altura;i++,v++){ // calcula a média  usando a matriz zerada               
+		
+		for(j=1,d=0;j<=largura;j++,d++){
+
+			 			media[0][0]=matriz0[i-1][j-1];
+			 			f+=media[0][0];
+			 			media[0][1]=matriz0[i-1][j];
+			 			f+=media[0][1];
+			 			media[0][2]=matriz0[i][j+1];
+			 			f+=media[0][2];
+			 			media[1][0]=matriz0[i][j-1];
+			 			f+=media[1][0];
+			 			media[1][1]=matriz0[i][j];
+			 			f+=media[1][1];
+			 			media[1][2]=matriz0[i-1][j+1];
+			 			f+=media[1][2];
+			 			media[2][0]=matriz0[i+1][j-1];
+			 			f+=media[2][0];
+			 			media[2][1]=matriz0[i+1][j];  
+			 			f+=media[2][1];  	
+			       		media[2][2]=matriz0[i+1][j+1];
+			       		f+=media[2][2];
+                		pou=f/9;
+                		matrizm[v][d]=pou; //Insere a média na matriz final
+                		pou=0;
+                		f=0;
+		}
+	}
+        i=0;
+	j=0;
+	for(i=0;i<altura;i++){ //Printa a matriz final                  
+		
+		for(j=0;j<largura;j++){
+			printf("%d  ", matrizm[i][j]);
+			}
+		printf("\n");
+		}
+	return 0;
 }
