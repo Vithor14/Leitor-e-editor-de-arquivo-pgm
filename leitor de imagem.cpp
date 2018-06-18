@@ -11,6 +11,8 @@ int **AlocMatriz(int m, int n);
 
 int **LibMatriz(int m, int n, int **v);
 
+void nomearquivo(char *arquivofinal,char *arquivo);
+
 int main(){
 	
 	//arquivo e matriz com imagem original e imagem final
@@ -22,28 +24,25 @@ int main(){
 	int largura;
 	int altura;
 	int tons;
-	char arquivo[80];
+	char arquivo[80] = {'t','e','s','t','e','.','p','g','m',0};
 	char arquivofinal[80];
 	
 	//variaveis de controle de leitura: buffer e ponteiro pra vetor dos numeros, alem das variaveis i e j para colocar os dados na matriz
 	char buffer[80];
-	int numeros[45] = {0,0,0,0,0,0,0};
+	int numeros[45] = {0,0,0,0,0,0};
 	int i,j;
 	
-	//variavel para escolher o modo de edição
+	//variavel para escolher o modo de edição e contador para varios propositos
 	char modo;
+	int count;
 	
 	
-	//na versão final descomentamos isso e tiramos o "teste" como padrão
+	//na versão final descomentamos isso
 //	printf("digite o nome do arquivo original\n");
 //	gets(arquivo);
-//	
-//	fp = fopen(arquivo, "r");	
+	
+	fp = fopen(arquivo, "r");	
 
-	//nome temporario
-	fp = fopen("teste.pgm", "r");
-	
-	
 	learquivo(fp,buffer);
 	if( !(buffer[0] == 'P' && buffer[1] == '2') ){
 		printf("formato de arquivo incorreto\n");
@@ -82,6 +81,7 @@ int main(){
 	printf("0 - Sair\n");
 	
 	scanf("%c",&modo);
+	getchar();
 	if(modo == '1'){
 		//CODIGO DO KEVÃO DA MASCARA
 	}
@@ -91,15 +91,14 @@ int main(){
 	else if(modo == '0'){
 		printf("Nada foi feito\nSaindo...\n");
 		LibMatriz(altura,largura,imagem);
-		fclose(fp);
 		exit(1);
 	}
 	
+	nomearquivo(arquivofinal,arquivo);
 	
-	printf("digite o nome do arquivo que deseja salvar\n");
-	gets(arquivofinal);
-	fp = fopen(arquivofinal, "w");
 	
+//	fp = fopen(arquivofinal, "w");
+	printf("arquivo %s",arquivofinal);
 	
 	
 	
@@ -235,4 +234,39 @@ int **LibMatriz (int m, int n, int **v){
         }
       free (v);      
       return (NULL);
+}
+
+void nomearquivo(char *arquivofinal,char *arquivo){
+	int ok = 0,count;
+	char op;
+	
+	while(ok == 0){
+		printf("digite o nome do arquivo que deseja salvar\n");
+		
+		gets(arquivofinal);
+		
+		for(count = 0;arquivofinal[count] != 0 && arquivo[count] != 0;count++){
+			if(arquivofinal[count] != arquivo[count]||arquivofinal[count+1] != arquivo[count+1]){
+				ok = 1;
+				break;
+			}
+			if(arquivofinal[count + 1] == 0 && arquivo[count + 1] == 0){
+				printf("deseja sobrescrever o arquivo original?\nS ou N\n");
+				scanf("%c",&op);
+				getchar();
+				if(op == 'S' || op == 's'){
+					ok = 1;
+					break;
+				}
+				else{
+					ok = 0;
+					break;
+				}
+			}
+				
+				
+		}
+		
+	}
+	printf("arquivo %s",arquivofinal);
 }
