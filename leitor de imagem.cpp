@@ -23,6 +23,7 @@ int main(){
 	int altura;
 	int tons;
 	char arquivo[80];
+	char arquivofinal[80];
 	
 	//variaveis de controle de leitura: buffer e ponteiro pra vetor dos numeros, alem das variaveis i e j para colocar os dados na matriz
 	char buffer[80];
@@ -66,6 +67,7 @@ int main(){
 	}
 	
 	printf("imagem carregada\n\n");
+	fclose(fp);
 	
 	for(i = 0; i < altura; i++){
 		for(j = 0; j < largura;j++){
@@ -73,7 +75,7 @@ int main(){
 		}
 		printf("\n");
 	}
-	
+	printf("\n");
 	printf("o que deseja fazer%c\n\n",63);
 	printf("1 - Mascara laplaciana 3x3\n");
 	printf("2 - Media 3x3\n");
@@ -88,17 +90,20 @@ int main(){
 	}
 	else if(modo == '0'){
 		printf("Nada foi feito\nSaindo...\n");
-		LibMatriz(largura,altura,imagem);
+		LibMatriz(altura,largura,imagem);
 		fclose(fp);
 		exit(1);
 	}
 	
 	
-	//ainda preciso fazer o codigo pra escrever a imagem final num arquivo
+	printf("digite o nome do arquivo que deseja salvar\n");
+	gets(arquivofinal);
+	fp = fopen(arquivofinal, "w");
 	
 	
 	
-	LibMatriz(largura,altura,imagem);
+	
+	LibMatriz(altura,largura,imagem);
 	fclose(fp);
 	return 0;
 }
