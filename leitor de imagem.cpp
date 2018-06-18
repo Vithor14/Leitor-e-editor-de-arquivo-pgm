@@ -29,11 +29,11 @@ int main(){
 	int numeros[45] = {0,0,0,0,0,0,0};
 	int i,j;
 	
-	//variavel para escolher o modo de ediÁ„o
+	//variavel para escolher o modo de edi√ß√£o
 	char modo;
 	
 	
-	//na vers„o final descomentamos isso e tiramos o "teste" como padr„o
+	//na vers√£o final descomentamos isso e tiramos o "teste" como padr√£o
 //	printf("digite o nome do arquivo original\n");
 //	gets(arquivo);
 //	
@@ -57,10 +57,10 @@ int main(){
 	printf("Sua imagem tem tamanho %d*%d, e %d tons de cinza\n",largura,altura,tons);
 	printf("carregando imagem...\n");
 	
-	imagem = AlocMatriz(largura,altura);
+	imagem = AlocMatriz(altura,largura);
 	
-	for(i = 0; i < largura; i++){
-		for(j = 0; j < altura;j++){
+	for(i = 0; i < altura; i++){
+		for(j = 0; j < largura;j++){
 			imagem[i][j] = proxnumero(fp,buffer,numeros);
 		}
 	}
@@ -69,7 +69,7 @@ int main(){
 	
 	for(i = 0; i < altura; i++){
 		for(j = 0; j < largura;j++){
-			printf("%3d ",imagem[j][i]);
+			printf("%2d ",imagem[i][j]);
 		}
 		printf("\n");
 	}
@@ -81,7 +81,7 @@ int main(){
 	
 	scanf("%c",&modo);
 	if(modo == '1'){
-		//CODIGO DO KEV√O DA MASCARA
+		//CODIGO DO KEV√ÉO DA MASCARA
 	}
 	else if(modo == '2'){
 		//CODIGO DO PEDRINHO DA MEDIA
@@ -105,17 +105,17 @@ int main(){
 
 void learquivo(FILE *fp,char *buffer){
 		
-		//a funÁ„o deste codigo È ler 1 linha do arquivo de imagem, e remover, se houver,os comentarios trocando o inicializador deles por "\0" e passando essa linha pro vetor "buffer"
+		//a fun√ß√£o deste codigo √© ler 1 linha do arquivo de imagem, e remover, se houver,os comentarios trocando o inicializador deles por "\0" e passando essa linha pro vetor "buffer"
 		int count;
 		
-		//zerando o buffer pra n„o dar merda
+		//zerando o buffer pra n√£o dar merda
 		for(count=0;count<80;count++){
 			buffer[count] = 0;
 		}
 		
 		fgets(buffer,80,fp);
 		
-		//o # È o simbolo que se tem antes de algum comentario na image, e eu troco o "\n" por "\0" para garantir que o fim da linha È o fim da string 
+		//o # √© o simbolo que se tem antes de algum comentario na image, e eu troco o "\n" por "\0" para garantir que o fim da linha √© o fim da string 
 		for(count=0;count<80;count++){
 			if(buffer[count] == '#' || buffer[count] == '\n' || buffer[count] == '\0'){
 				buffer[count] = '\0';
@@ -125,17 +125,17 @@ void learquivo(FILE *fp,char *buffer){
 	}
 
 void converteparaint(char *buffer,int *numeros){
-	//essa funÁ„o tem a utilidade de pegar a linha sÛ composta de numeros da funÁ„o "learquivo" e os converter para inteiros
+	//essa fun√ß√£o tem a utilidade de pegar a linha s√≥ composta de numeros da fun√ß√£o "learquivo" e os converter para inteiros
 	int count,n;
 	char straux[5];
 	
-	//numeros[0] È basicamente a quantidade de numeros que ainda tem no vetor, isso È usado para fazer uma pilha,boto no mesmo vetor e para economizar passagem de valores
+	//numeros[0] √© basicamente a quantidade de numeros que ainda tem no vetor, isso √© usado para fazer uma pilha,boto no mesmo vetor e para economizar passagem de valores
 	numeros[0] = 0;
 	
 	//aqui count vai passando pelo vetor procurando um numero "buffer[count] >= '0' && buffer[count] <= '9'" e se o encontra inicia um segundo for
-	//esse segundo for comeÁa em n=0, e vai caminhando apos esse numero ja encontrado, ate achar o fim dele,a cada passo copia um char da string pra uma string auxiliar "straux" 
+	//esse segundo for come√ßa em n=0, e vai caminhando apos esse numero ja encontrado, ate achar o fim dele,a cada passo copia um char da string pra uma string auxiliar "straux" 
 	//e quando encontra o fim do numero aumenta o contador numeros[0], marcando que encontrou mais um numero nessa linha
-	//e ent„o converte essa string auxiliar, usando o atoi, para um numero inteiro, e insere esse numero na posiÁ„o numeros[0](que È a quantidade de numeros,indice do ultimo) 
+	//e ent√£o converte essa string auxiliar, usando o atoi, para um numero inteiro, e insere esse numero na posi√ß√£o numeros[0](que √© a quantidade de numeros,indice do ultimo) 
 	for(count = 0; buffer[count] != '\0' ;count++){
 		if(buffer[count] >= '0' && buffer[count] <= '9'){			
 			for(n = 0; buffer[count + n] >= '0' && buffer[count + n] <= '9' ;n++){
@@ -145,16 +145,16 @@ void converteparaint(char *buffer,int *numeros){
 			numeros[numeros[0]] = atoi(straux);
 			count = count+n;
 			
-			//zera a string auxiliar, evita tretas onde se le um numero com menos caracteres que o anterior ex: le 11,converte pra int corretamente ent„o le 5, converte 51(devia ser 5)
+			//zera a string auxiliar, evita tretas onde se le um numero com menos caracteres que o anterior ex: le 11,converte pra int corretamente ent√£o le 5, converte 51(devia ser 5)
 			for(n=0; n < 5 ; n++){
 				straux[n] = 0;
 			}
 		}	
 	}
-	//como o vetor numeros foi passado por ponteiros n„o precisa de retorno
+	//como o vetor numeros foi passado por ponteiros n√£o precisa de retorno
 	
 	
-//	printa os numeros convertidos na execuÁ„o atual, para debug
+//	printa os numeros convertidos na execu√ß√£o atual, para debug
 //	printf("numeros na linha :%d\n",numeros[0]);
 //	for(count = 1;count <= numeros[0] ; count++){printf("%d ",numeros[count]);}
 //	printf("\n\n");
@@ -162,18 +162,18 @@ void converteparaint(char *buffer,int *numeros){
 }
 
 int proxnumero(FILE *fp,char *buffer,int *numeros){
-	//funÁ„o que organiza o vetor numeros como pilhar, primeiro verificando se ha mais de 1 numero na pilha, se n„o houver, ele pede mais
+	//fun√ß√£o que organiza o vetor numeros como pilhar, primeiro verificando se ha mais de 1 numero na pilha, se n√£o houver, ele pede mais
 	//se tiver numeros ele coloca o primeiro valor em uma variavel auxiliar, move tudo 1 indice pra cima, e retorna a variavel auxiliar
 	int temp = 0;
 	int count;
 	
-	//o while È necessario para caso haja multiplas linhas de numeros, com comentarios por exemplo
+	//o while √© necessario para caso haja multiplas linhas de numeros, com comentarios por exemplo
 	while(numeros[0] == 0){
 		learquivo(fp,buffer);
 		converteparaint(buffer,numeros);
 	}
 	
-	//codigo debug que printa todo o vetor numeros, se o vetor numeros n„o estiver zerado na primeira execuÁ„o, eh possivel descobrir aqui se deu merda
+	//codigo debug que printa todo o vetor numeros, se o vetor numeros n√£o estiver zerado na primeira execu√ß√£o, eh possivel descobrir aqui se deu merda
 //	printf("recebido:\n");
 //	for(count = 0;count <= numeros[0] ; count++){printf("%d ",numeros[count]);}
 //	printf("\n");
@@ -231,4 +231,3 @@ int **LibMatriz (int m, int n, int **v){
       free (v);      
       return (NULL);
 }
-
