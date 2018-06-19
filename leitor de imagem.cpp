@@ -37,9 +37,8 @@ int main(){
 	int count;
 	
 	
-	//na versão final descomentamos isso
-//	printf("digite o nome do arquivo original\n");
-//	gets(arquivo);
+	printf("digite o nome do arquivo original\n");
+	gets(arquivo);
 	
 	fp = fopen(arquivo, "r");	
 
@@ -58,6 +57,7 @@ int main(){
 	printf("carregando imagem...\n");
 	
 	imagem = AlocMatriz(altura,largura);
+	imagemfim = AlocMatriz(altura,largura);
 	
 	for(i = 0; i < altura; i++){
 		for(j = 0; j < largura;j++){
@@ -78,6 +78,7 @@ int main(){
 	printf("o que deseja fazer%c\n\n",63);
 	printf("1 - Mascara laplaciana 3x3\n");
 	printf("2 - Media 3x3\n");
+	printf("9 - Copiar o arquivo\n");
 	printf("0 - Sair\n");
 	
 	scanf("%c",&modo);
@@ -88,17 +89,34 @@ int main(){
 	else if(modo == '2'){
 		//CODIGO DO PEDRINHO DA MEDIA
 	}
+	else if(modo == '9'){
+		for(i = 0; i < altura; i++){
+			for(j = 0; j < largura;j++){
+				imagemfim[i][j] = imagem[i][j];
+			}
+		}
+	}	
 	else if(modo == '0'){
 		printf("Nada foi feito\nSaindo...\n");
 		LibMatriz(altura,largura,imagem);
 		exit(1);
 	}
 	
-	nomearquivo(arquivofinal,arquivo);
+	nomearquivo(arquivofinal,arquivo);	
+	fp = fopen(arquivofinal, "w");
 	
+	fprintf(fp,"P2\n");
+	fprintf(fp,"%d %d\n", largura, altura);
+	fprintf(fp,"%d\n", tons);
 	
-//	fp = fopen(arquivofinal, "w");
-	printf("arquivo %s",arquivofinal);
+	for (i = 0,count = 0; i < altura; i++) {
+	    for (j = 0; j < largura; j++,count++) {
+	        fprintf(fp,"%d ", imagem[i][j]);
+	    	if(count % 17 == 0){
+	           	fprintf(fp,"\n");
+	        }
+	    }
+	}
 	
 	
 	
@@ -268,5 +286,4 @@ void nomearquivo(char *arquivofinal,char *arquivo){
 		}
 		
 	}
-	printf("arquivo %s",arquivofinal);
 }
