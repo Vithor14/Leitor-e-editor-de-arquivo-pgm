@@ -259,7 +259,7 @@ void nomearquivo(char *arquivofinal,char *arquivo){
 	char op;
 	
 	while(ok == 0){
-		printf("digite o nome do arquivo que deseja salvar\n");
+		printf("digite o nome do arquivo a ser salvo\n");
 		
 		gets(arquivofinal);
 		
