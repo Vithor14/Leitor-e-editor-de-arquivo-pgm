@@ -1,7 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-int linhas,colunas;
+int largura;
+int altura;
 
 void learquivo(FILE *fp,char *buffer);
 
@@ -28,9 +29,8 @@ int main(){
 	int **imagem;
 	int **imagemfim;
 	
-	//altura,largura,tons,nome do arquivo a ser lido, largura eh a qualtidade de colunas que a imagem tem, e altura a quantidade de linhas
-	int largura;
-	int altura;
+	//altura,largura,tons,nome do arquivo a ser lido, largura eh a qualtidade de largura que a imagem tem, e altura a quantidade de altura
+
 	int tons;
 	char arquivo[80] = {'t','e','s','t','e','.','p','g','m',0};
 	char arquivofinal[80];
@@ -65,8 +65,8 @@ int main(){
 	largura = proxnumero(fp,buffer,numeros);
 	altura = proxnumero(fp,buffer,numeros);
 	tons = proxnumero(fp,buffer,numeros);
-	linhas = altura;
-	colunas = largura;
+	altura = altura;
+	largura = largura;
 	
 	
 	printf("\nSua imagem tem tamanho %d*%d, e %d tons de cinza\n",largura,altura,tons);
@@ -104,7 +104,7 @@ int main(){
 	scanf("%c",&modo);
 	getchar();
 	if(modo == '1'){
-		laplace(imagem,imagemfim);
+		imagemfim = laplace(imagem,imagemfim);
 	}
 	else if(modo == '2'){
 		
@@ -143,12 +143,12 @@ int main(){
 	}
 	
 //	printa resultado da funcaoo
-	for(i = 0; i < altura; i++){
-		for(j = 0; j < largura;j++){
-			printf("%2d ",imagemfim[i][j]);
-		}
-		printf("\n");
-	}
+//	for(i = 0; i < altura; i++){
+//		for(j = 0; j < largura;j++){
+//			printf("%2d ",imagemfim[i][j]);
+//		}
+//		printf("\n");
+//	}
 	
 	nomearquivo(arquivofinal,arquivo);	
 	fp = fopen(arquivofinal, "w");
@@ -163,7 +163,7 @@ int main(){
 	
 	for (i = 0,count = 0; i < altura; i++) {
 	    for (j = 0; j < largura; j++,count++) {
-	        fprintf(fp,"%3.d ", imagemfim[i][j]);
+	        fprintf(fp,"%d ", imagemfim[i][j]);
 	    	if(count % 17 == 0){
 	           	fprintf(fp,"\n");
 	        }
@@ -241,7 +241,7 @@ int proxnumero(FILE *fp,char *buffer,int *numeros){
 	int temp = 0;
 	int count;
 	
-	//o while é necessario para caso haja multiplas linhas de numeros, com comentarios por exemplo
+	//o while é necessario para caso haja multiplas altura de numeros, com comentarios por exemplo
 	while(numeros[0] == 0){
 		learquivo(fp,buffer);
 		converteparaint(buffer,numeros);
@@ -433,22 +433,22 @@ int** laplace(int **matrizArquivo,int **matrizfinal) {
     int s, t,i,j;
     int count1, count2;
 
-    matriz = AlocMatriz(colunas + 2,linhas + 2);
+    matriz = AlocMatriz(largura + 2,altura + 2);
     
-    for (i = linhas + 2; i < linhas; i++) {
-        for (j = colunas + 2; j < colunas; j++) {
+    for (i = altura + 2; i < altura; i++) {
+        for (j = largura + 2; j < largura; j++) {
             matriz[i][j] = 0;
         }
     }
 
 
-    for (int i = 1; i < linhas + 1; i++) {
-        for (int j = 1; j < colunas + 1; j++) {
+    for (int i = 1; i < altura + 1; i++) {
+        for (int j = 1; j < largura + 1; j++) {
             matriz[i][j] = matrizArquivo[i - 1][j - 1];
         }
     }
-    for (int i = 1; i < linhas+1; i++) {
-        for (int j = 1; j < colunas+1; j++) {
+    for (int i = 1; i < altura+1; i++) {
+        for (int j = 1; j < largura+1; j++) {
 
             int soma = 0;
             for (count1 = 0, s = i - 1; s < i + 2; s++,count1++) {
