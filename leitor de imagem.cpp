@@ -16,9 +16,15 @@ int **LibMatriz(int m, int n, int **v);
 
 void nomearquivo(char *arquivofinal,char *arquivo);
 
+void extensaoarquivo(char *arquivo);
+
 void media3x3(int altura, int largura, int **matriz, int **matrizm);
 
 int** laplace(int **matrizArquivo,int **matrizfinal);
+
+int** sobel(int **matrizArquivo,int **matrizfinal);
+
+int** prewitt(int **matrizArquivo,int **matrizfinal);
 
 int media5x5(int altura, int largura, int **matriz, int **matrizm); 
 
@@ -50,7 +56,7 @@ int main(){
 	
 	fp = fopen(arquivo, "r");	
 	if (fp == NULL) {
-        printf("Erro de escrita de arquivo\n");
+        printf("Erro de leitura de arquivo\n");
         exit(1);
     }
 
@@ -94,10 +100,10 @@ int main(){
 	printf("\n");
 	printf("o que deseja fazer%c\n\n",63);
 	printf("1 - Mascara laplaciana 3x3\n");
-	printf("2 - Mascara 5x5\n");
-	printf("3 - Media 3x3\n");
-	printf("4 - Media 5x5\n");
-	printf("5 - Media 7x7\n");
+	printf("2 - Mascara de Sobel\n");
+	printf("3 - Mascara de Prewitt\n");
+	printf("4 - Media 3x3\n");
+	printf("5 - Media 5x5\n");
 	printf("9 - Copiar o arquivo\n");
 	printf("0 - Sair\n");
 	
@@ -107,16 +113,16 @@ int main(){
 		imagemfim = laplace(imagem,imagemfim);
 	}
 	else if(modo == '2'){
-		
+		imagemfim = sobel(imagem,imagemfim);
 	}
 	else if(modo == '3'){
-		media3x3(altura,largura,imagem,imagemfim);
+		imagemfim = prewitt(imagem,imagemfim);
 	}
 	else if(modo == '4'){
-		media5x5(altura,largura,imagem,imagemfim);
+		media3x3(altura,largura,imagem,imagemfim);
 	}
 	else if(modo == '5'){
-		
+		media5x5(altura,largura,imagem,imagemfim);
 	}
 	else if(modo == '9'){
 		for(i = 0; i < altura; i++){
@@ -151,6 +157,8 @@ int main(){
 //	}
 	
 	nomearquivo(arquivofinal,arquivo);	
+	extensaoarquivo(arquivofinal);
+	
 	fp = fopen(arquivofinal, "w");
     if (fp == NULL) {
         printf("Erro de escrita de arquivo\n");
@@ -170,7 +178,7 @@ int main(){
 	    }
 	}
 	
-	
+	printf("Arquivo salvo com sucesso\n");
 	
 	LibMatriz(altura,largura,imagem);
 	fclose(fp);
@@ -340,6 +348,20 @@ void nomearquivo(char *arquivofinal,char *arquivo){
 	}
 }
 
+void extensaoarquivo(char *arquivo){
+	int count;
+	for(count = 0;arquivo[count] != 0;count++);
+		
+	if(! (arquivo[count - 4] == '.' && arquivo[count - 3] == 'p' && arquivo[count - 2] == 'g' && arquivo[count - 1] == 'm') ){
+		arquivo[count] = '.';
+		arquivo[count + 1] = 'p';
+		arquivo[count + 2] = 'g';
+		arquivo[count + 3] = 'm';
+		arquivo[count + 4] = 0;
+	}
+		
+}
+
 void media3x3(int altura, int largura, int **matriz, int **matrizm){
 	int i=0,j=0;
 
@@ -426,14 +448,14 @@ void media3x3(int altura, int largura, int **matriz, int **matrizm){
 }
 
 int** laplace(int **matrizArquivo,int **matrizfinal) {
-    int laPlace[3][3] = {0,-1,0,
+    int mascara[3][3] = {0,-1,0,
                      -1,4,-1,
                       0,-1,0};
     int **matriz;
     int s, t,i,j;
     int count1, count2;
 
-    matriz = AlocMatriz(largura + 2,altura + 2);
+    matriz = AlocMatriz(altura + 2,largura + 2);
     
     for (i = altura + 2; i < altura; i++) {
         for (j = largura + 2; j < largura; j++) {
@@ -453,7 +475,7 @@ int** laplace(int **matrizArquivo,int **matrizfinal) {
             int soma = 0;
             for (count1 = 0, s = i - 1; s < i + 2; s++,count1++) {
                 for (count2 = 0, t = j - 1; t < j + 2; t++,count2++) {
-                    soma += matriz[s][t] * laPlace[count1][count2];
+                    soma += matriz[s][t] * mascara[count1][count2];
                 }
             }
 //            if (soma > 255)
@@ -464,6 +486,94 @@ int** laplace(int **matrizArquivo,int **matrizfinal) {
             matrizfinal[i - 1][j - 1] = soma;
         }
     }
+    
+    LibMatriz(altura + 2,largura + 2,matriz);
+    return matrizfinal;
+}
+
+int** sobel(int **matrizArquivo,int **matrizfinal) {
+    int mascara[3][3] = {-1,0,+1,
+                     -2,0,+2,
+                      -1,0,+1};
+    int **matriz;
+    int s, t,i,j;
+    int count1, count2;
+
+    matriz = AlocMatriz(altura + 2,largura + 2);
+    
+    for (i = altura + 2; i < altura; i++) {
+        for (j = largura + 2; j < largura; j++) {
+            matriz[i][j] = 0;
+        }
+    }
+
+
+    for (int i = 1; i < altura + 1; i++) {
+        for (int j = 1; j < largura + 1; j++) {
+            matriz[i][j] = matrizArquivo[i - 1][j - 1];
+        }
+    }
+    for (int i = 1; i < altura+1; i++) {
+        for (int j = 1; j < largura+1; j++) {
+
+            int soma = 0;
+            for (count1 = 0, s = i - 1; s < i + 2; s++,count1++) {
+                for (count2 = 0, t = j - 1; t < j + 2; t++,count2++) {
+                    soma += matriz[s][t] * mascara[count1][count2];
+                }
+            }
+//            if (soma > 255)
+//                soma = 255;
+//            else if (soma < 0)
+//                soma = 0;
+
+            matrizfinal[i - 1][j - 1] = soma;
+        }
+    }
+    LibMatriz(altura + 2,largura + 2,matriz);
+    return matrizfinal;
+}
+
+int** prewitt(int **matrizArquivo,int **matrizfinal) {
+    int mascara[3][3] = {-1,-1,-1,
+						0,0,0,
+						1,1,1};
+    int **matriz;
+    int s, t,i,j;
+    int count1, count2;
+
+    matriz = AlocMatriz(altura + 2,largura + 2);
+    
+    for (i = altura + 2; i < altura; i++) {
+        for (j = largura + 2; j < largura; j++) {
+            matriz[i][j] = 0;
+        }
+    }
+
+
+    for (int i = 1; i < altura + 1; i++) {
+        for (int j = 1; j < largura + 1; j++) {
+            matriz[i][j] = matrizArquivo[i - 1][j - 1];
+        }
+    }
+    for (int i = 1; i < altura+1; i++) {
+        for (int j = 1; j < largura+1; j++) {
+
+            int soma = 0;
+            for (count1 = 0, s = i - 1; s < i + 2; s++,count1++) {
+                for (count2 = 0, t = j - 1; t < j + 2; t++,count2++) {
+                    soma += matriz[s][t] * mascara[count1][count2];
+                }
+            }
+//            if (soma > 255)
+//                soma = 255;
+//            else if (soma < 0)
+//                soma = 0;
+
+            matrizfinal[i - 1][j - 1] = soma;
+        }
+    }
+    LibMatriz(altura + 2,largura + 2,matriz);
     return matrizfinal;
 }
 
