@@ -13,6 +13,8 @@ int **LibMatriz(int m, int n, int **v);
 
 void nomearquivo(char *arquivofinal,char *arquivo);
 
+void media3x3(int altura, int largura, int **matriz, int **matrizm);
+
 int main(){
 	
 	//arquivo e matriz com imagem original e imagem final
@@ -53,8 +55,7 @@ int main(){
 	altura = proxnumero(fp,buffer,numeros);
 	tons = proxnumero(fp,buffer,numeros);
 	
-	printf("Sua imagem tem tamanho %d*%d, e %d tons de cinza\n",largura,altura,tons);
-	printf("carregando imagem...\n");
+	printf("\nSua imagem tem tamanho %d*%d, e %d tons de cinza\n",largura,altura,tons);
 	
 	imagem = AlocMatriz(altura,largura);
 	imagemfim = AlocMatriz(altura,largura);
@@ -68,12 +69,14 @@ int main(){
 	printf("imagem carregada\n\n");
 	fclose(fp);
 	
-	for(i = 0; i < altura; i++){
-		for(j = 0; j < largura;j++){
-			printf("%2d ",imagem[i][j]);
-		}
-		printf("\n");
-	}
+//	mostra toda a imagem
+//	for(i = 0; i < altura; i++){
+//		for(j = 0; j < largura;j++){
+//			printf("%2d ",imagem[i][j]);
+//		}
+//		printf("\n");
+//	}
+	
 	printf("\n");
 	printf("o que deseja fazer%c\n\n",63);
 	printf("1 - Mascara laplaciana 3x3\n");
@@ -87,7 +90,7 @@ int main(){
 		//CODIGO DO KEVÃO DA MASCARA
 	}
 	else if(modo == '2'){
-		//CODIGO DO PEDRINHO DA MEDIA
+		media3x3(altura,largura,imagem,imagemfim);
 	}
 	else if(modo == '9'){
 		for(i = 0; i < altura; i++){
@@ -111,7 +114,7 @@ int main(){
 	
 	for (i = 0,count = 0; i < altura; i++) {
 	    for (j = 0; j < largura; j++,count++) {
-	        fprintf(fp,"%d ", imagem[i][j]);
+	        fprintf(fp,"%3.d ", imagemfim[i][j]);
 	    	if(count % 17 == 0){
 	           	fprintf(fp,"\n");
 	        }
@@ -259,7 +262,7 @@ void nomearquivo(char *arquivofinal,char *arquivo){
 	char op;
 	
 	while(ok == 0){
-		printf("digite o nome do arquivo a ser salvo\n");
+		printf("digite o nome do arquivo que deseja salvar\n");
 		
 		gets(arquivofinal);
 		
@@ -286,4 +289,89 @@ void nomearquivo(char *arquivofinal,char *arquivo){
 		}
 		
 	}
+}
+
+void media3x3(int altura, int largura, int **matriz, int **matrizm){
+	int i=0,j=0;
+
+	int matriz0[altura+2][largura+2];	// DEFINE A MATRIZ QUE VAI SER UTILIZADA PARA SER EDITADA UTILIZANDO A MÉDIA.
+	int f=0;
+	int v=0,d=0;
+	int pou=0;
+	int media[3][3]={0,0,0,0,0,0,0,0,0}; // Matriz da média
+	i=0;
+	j=0;
+	
+	for(i=0;i<altura+2;i++){   //faz uma matriz só com zeros para receber a imagem e criar as bordas(0);
+             
+       for(j=0;j<largura+2;j++){
+           matriz0[i][j] =0;
+//		   printf("%d  ", matriz0[i][j]);
+       }
+//		printf("\n");	
+	}
+	i=0;
+	j=0;
+//	printf("\n");
+	for(i=1;i<=altura;i++){       //INSERE A IMAGEM NA MATRIZ ZERADA
+             
+       		for(j=1;j<=largura;j++){
+           		matriz0[i][j] = matriz[i-1][j-1];
+//				printf("%d  ", matriz0[i][j]);
+			}
+//		printf("\n");	
+	}
+			
+	i=0;
+	j=0;
+//	printf("\n");
+//	for(i=0;i<altura+2;i++){ //Printa a imagem da matriz para ver se ocorreu tudo certo com as bordas
+//             
+//       for(j=0;j<largura+2;j++){
+//		   printf("%2d ", matriz0[i][j]);
+//       }
+//		printf("\n");
+//	}
+//	printf("\n");
+
+	i=1;
+	j=1;
+	for(i=1,v=0;i<=altura;i++,v++){ // calcula a média  usando a matriz zerada               
+		
+		for(j=1,d=0;j<=largura;j++,d++){
+
+			 			media[0][0]=matriz0[i-1][j-1];
+			 			f+=media[0][0];
+			 			media[0][1]=matriz0[i-1][j];
+			 			f+=media[0][1];
+			 			media[0][2]=matriz0[i][j+1];
+			 			f+=media[0][2];
+			 			media[1][0]=matriz0[i][j-1];
+			 			f+=media[1][0];
+			 			media[1][1]=matriz0[i][j];
+			 			f+=media[1][1];
+			 			media[1][2]=matriz0[i-1][j+1];
+			 			f+=media[1][2];
+			 			media[2][0]=matriz0[i+1][j-1];
+			 			f+=media[2][0];
+			 			media[2][1]=matriz0[i+1][j];  
+			 			f+=media[2][1];  	
+			       		media[2][2]=matriz0[i+1][j+1];
+			       		f+=media[2][2];
+                		pou=f/9;
+                		matrizm[v][d]=pou; //Insere a média na matriz final
+                		pou=0;
+                		f=0;
+		}
+	}
+        i=0;
+	j=0;
+//	for(i=0;i<altura;i++){ //Printa a matriz final                  
+//		
+//		for(j=0;j<largura;j++){
+//			printf("%d  ", matrizm[i][j]);
+//			}
+//		printf("\n");
+//		}
+	
 }
