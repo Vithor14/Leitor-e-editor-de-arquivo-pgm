@@ -1,2 +1,2 @@
 # Trabalho-final-c
-trabalho final de programaçao, onde deveriamos ler  e editar um arquivo pgm
+Este programa tem a função de ler um arquivo de imagem .PGM e executar as mascaras laplaciana, de sobel,de prewitt e mascaras de media
